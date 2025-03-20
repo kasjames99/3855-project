@@ -176,9 +176,11 @@ cython_debug/
 # Project specific ignores
 logs/
 data/
-**/config.prod.yml
+config/prod/
 **/*.prod.env
 .env
 .venv
 venv/
 ENV/
+*.zip
+*.jpg

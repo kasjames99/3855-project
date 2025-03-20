@@ -9,7 +9,11 @@ import os
 import yaml
 import httpx
 
-config_path = os.environ.get('CONFIG_PATH', '../config/processing')
+env = os.environ.get('ENV', 'dev')
+
+base_config_path = os.environ.get('CONFIG_PATH', '../config')
+
+config_path = os.path.join(base_config_path, env, 'processing')
 log_conf_file = os.path.join(config_path, 'processing_log_conf.yml')
 app_conf_file = os.path.join(config_path, 'processing_app_conf.yml')
 
@@ -21,6 +25,7 @@ with open(log_conf_file, 'r') as f:
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('processingService')
+logger.info(f"Loading configuration for environment: {env}")
 
 STATS_FILE_PATH = "stats.json"
 

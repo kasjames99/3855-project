@@ -12,7 +12,11 @@ from models import temperatureEvent, motionEvent
 from datetime import datetime
 from connexion import NoContent
 
-config_path = os.environ.get('CONFIG_PATH', '../config/storage')
+env = os.environ.get('ENV', 'dev')
+
+base_config_path = os.environ.get('CONFIG_PATH', '../config')
+
+config_path = os.path.join(base_config_path, env, 'storage')
 log_conf_file = os.path.join(config_path, 'storage_log_conf.yml')
 app_conf_file = os.path.join(config_path, 'storage_app_conf.yaml')
 

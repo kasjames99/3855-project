@@ -58,7 +58,8 @@ services:
       - ./logs:/app/logs
     environment:
       - APP_HOST=0.0.0.0
-      - CONFIG_PATH=/app/config/receiver
+      - CONFIG_PATH=/app/config
+      - ENV=${ENV:-dev}
     depends_on:
       - kafka
 
@@ -74,7 +75,8 @@ services:
       - ./logs:/app/logs
     environment:
       - APP_HOST=0.0.0.0
-      - CONFIG_PATH=/app/config/storage
+      - CONFIG_PATH=/app/config
+      - ENV=${ENV:-dev}
     depends_on:
       db:
         condition: service_healthy
@@ -94,8 +96,9 @@ services:
       - ./data/processing:/app/data
     environment:
       - APP_HOST=0.0.0.0
-      - CONFIG_PATH=/app/config/processing
+      - CONFIG_PATH=/app/config
       - DATA_PATH=/app/data
+      - ENV=${ENV:-dev}
     depends_on:
       - storage
 
@@ -111,7 +114,8 @@ services:
       - ./logs:/app/logs
     environment:
       - APP_HOST=0.0.0.0
-      - CONFIG_PATH=/app/config/analyzer
+      - CONFIG_PATH=/app/config
+      - ENV=${ENV:-dev}
     depends_on:
       - kafka
 

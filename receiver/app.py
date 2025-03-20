@@ -11,7 +11,11 @@ from threading import Lock
 from connexion import NoContent
 from pykafka import KafkaClient
 
-config_path = os.environ.get('CONFIG_PATH', '../config/receiver')
+env = os.environ.get('ENV', 'dev')
+
+base_config_path = os.environ.get('CONFIG_PATH', '../config')
+
+config_path = os.path.join(base_config_path, env, 'receiver')
 log_conf_file = os.path.join(config_path, 'receiver_log_conf.yml')
 app_conf_file = os.path.join(config_path, 'receiver_app_conf.yml')
 
