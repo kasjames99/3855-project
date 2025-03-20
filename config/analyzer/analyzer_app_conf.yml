@@ -1,0 +1,8 @@
+kafka:
+  hostname: kafka
+  port: 29092
+  topic: events
+
+service:
+  port: 8085
+  debug: true

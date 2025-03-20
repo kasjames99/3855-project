@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: Smart Home Monitoring API
+  version: 1.0.0
+  description: API for receiving events from smart home devices.
+paths:
+  /events/temperature:
+    post:
+      summary: Receive temperature event
+      description: Endpoint for receiving temperature readings from smart thermostats.
+      operationId: app.postTemperatureEvent
+      requestBody:
+        description: Temperature event data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemperatureEvent'
+      responses:
+        "201":
+          description: Temperature event recorded successfully.
+        "400":
+          description: Invalid input.
+    get:
+      summary: Retrieve temperature events
+      description: Fetch stored temperature readings.
+      operationId: app.getTemperatureEvents
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Start timestamp for event filtering.
+        - name: end_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: End timestamp for event filtering.
+      responses:
+        "200":
+          description: Successfully retrieved temperature events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TemperatureEvent"
+  /events/motion:
+    post:
+      summary: Receive motion event
+      description: Endpoint for receiving motion detection events.
+      operationId: app.postMotionEvent
+      requestBody:
+        description: Motion event data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MotionEvent'
+      responses:
+        "201":
+          description: Motion event recorded successfully.
+        "400":
+          description: Invalid input.
+    get:
+      summary: Retrieve motion events
+      description: Fetch stored motion detection events.
+      operationId: app.getMotionEvents
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Start timestamp for event filtering.
+        - name: end_timestamp
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: End timestamp for event filtering.
+      responses:
+        "200":
+          description: Successfully retrieved motion events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MotionEvent"
+components:
+  schemas:
+    TemperatureEvent:
+      type: object
+      required:
+        - device_id
+        - temperature
+        - event_type
+      properties:
+        device_id:
+          type: string
+          description: The ID of the device sending the event.
+          example: "thermostat-001"
+        temperature:
+          type: number
+          description: The temperature reading in Celsius.
+          example: 22.5
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the reading was taken.
+          example: "2025-01-09T10:30:00Z"
+        event_type:
+          type: string
+          description: The type of event.
+          example: "temperature"
+    MotionEvent:
+      type: object
+      required:
+        - device_id
+        - room
+        - motion_intensity
+      properties:
+        device_id:
+          type: string
+          description: The ID of the motion detector sending the event.
+          example: "motion-sensor-007"
+        room:
+          type: string
+          description: The room where motion was detected.
+          example: "Living Room"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the motion was detected.
+          example: "2025-01-09T10:45:00Z"
+        motion_intensity:
+          type: number
+          description: The intensity of the detected motion (0-100 scale).
+          example: 75

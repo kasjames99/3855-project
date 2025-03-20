@@ -1,0 +1,9 @@
+version: 1
+events:
+  hostname: kafka
+  port: 29092
+  topic: events
+  temperature:
+    url: "http://storage:8090/temperature"
+  motion:
+    url: "http://storage:8090/motion"

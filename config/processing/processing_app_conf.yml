@@ -1,0 +1,12 @@
+urls:
+  temperature_events: "http://storage:8090/events/temperature"
+  motion_events: "http://storage:8090/events/motion"
+
+file_paths:
+  stats_file: "/app/data/stats.json"
+
+logging:
+  config_file: "processing_log_conf.yml"
+
+scheduler:
+  interval_seconds: 5

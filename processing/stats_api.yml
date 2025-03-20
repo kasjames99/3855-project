@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  description: This API provides event stats.
+  version: "1.0.0"
+  title: Stats API
+  contact:
+    email: kjames39@my.bcit.ca
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats.
+      operationId: app.get_stats
+      description: Gets statistics based on temperature and motion events, including cumulative counts and numeric values (max, min, avg).
+      responses:
+        '200':
+          description: Successfully returned event stats.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  num_temperature_events:
+                    type: integer
+                    example: 1000
+                  num_motion_events:
+                    type: integer
+                    example: 1200
+                  max_temperature_value:
+                    type: number
+                    example: 90.5
+                  min_temperature_value:
+                    type: number
+                    example: 5.3
+                  avg_temperature_value:
+                    type: number
+                    example: 45.2
+                  max_motion_intensity:
+                    type: number
+                    example: 80.0
+                  min_motion_intensity:
+                    type: number
+                    example: 10.0
+                  avg_motion_intensity:
+                    type: number
+                    example: 45.5
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    ReadingStats:
+      required:
+        - num_temperature_events
+        - num_motion_events
+        - max_temperature_value
+        - min_temperature_value
+        - avg_temperature_value
+        - max_motion_intensity
+        - min_motion_intensity
+        - avg_motion_intensity
+      properties:
+        num_temperature_events:
+          type: integer
+          example: 500
+        num_motion_events:
+          type: integer
+          example: 1000
+        max_temperature_value:
+          type: number
+          example: 100.0
+        min_temperature_value:
+          type: number
+          example: 1.2
+        avg_temperature_value:
+          type: number
+          example: 50.5
+        max_motion_intensity:
+          type: number
+          example: 85.0
+        min_motion_intensity:
+          type: number
+          example: 5.0
+        avg_motion_intensity:
+          type: number
+          example: 50.0

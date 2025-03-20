@@ -1,0 +1,132 @@
+openapi: 3.0.3
+info:
+  title: Smart Home Monitoring API
+  version: 1.0.0
+  description: API for receiving events from smart home devices.
+paths:
+  /events/temperature:
+    get:
+      summary: Get temperature events
+      operationId: app.get_temperature_events
+      description: Retrieves temperature events within the given time range.
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          description: The start timestamp in ISO 8601 format.
+          schema:
+            type: string
+            format: date-time
+          example: "2025-01-09T10:00:00Z"
+        - name: end_timestamp
+          in: query
+          required: true
+          description: The end timestamp in ISO 8601 format.
+          schema:
+            type: string
+            format: date-time
+          example: "2025-01-09T12:00:00Z"
+      responses:
+        "200":
+          description: A list of temperature events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemperatureEvent'
+        "400":
+          description: Invalid input.
+  /events/motion:
+    get:
+      summary: Get motion events
+      operationId: app.get_motion_events
+      description: Retrieves motion events within the given time range.
+      parameters:
+        - name: start_timestamp
+          in: query
+          required: true
+          description: The start timestamp in ISO 8601 format.
+          schema:
+            type: string
+            format: date-time
+          example: "2025-01-09T10:00:00Z"
+        - name: end_timestamp
+          in: query
+          required: true
+          description: The end timestamp in ISO 8601 format.
+          schema:
+            type: string
+            format: date-time
+          example: "2025-01-09T12:00:00Z"
+      responses:
+        "200":
+          description: A list of motion events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MotionEvent'
+        "400":
+          description: Invalid input.
+components:
+  schemas:
+    TemperatureEvent:
+      type: object
+      required:
+        - device_id
+        - temperature
+        - event_type
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          description: The ID of the device sending the event.
+          example: "thermostat-001"
+        temperature:
+          type: number
+          description: The temperature reading in Celsius.
+          example: 22.5
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the reading was taken.
+          example: "2025-01-09T10:30:00Z"
+        event_type:
+          type: string
+          description: The type of event.
+          example: "temperature"
+        trace_id:
+          type: integer
+          description: Unique identifier for tracing the request.
+          example: "1704912245123456789"
+    MotionEvent:
+      type: object
+      required:
+        - device_id
+        - room
+        - motion_intensity
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          description: The ID of the motion detector sending the event.
+          example: "motion-sensor-007"
+        room:
+          type: string
+          description: The room where motion was detected.
+          example: "Living Room"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the motion was detected.
+          example: "2025-01-09T10:45:00Z"
+        motion_intensity:
+          type: number
+          description: The intensity of the detected motion (0-100 scale).
+          example: 75
+        trace_id:
+          type: integer
+          description: Unique identifier for tracing the request.
+          example: "1704912245123456789"

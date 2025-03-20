@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  description: This API provides analyzer info for temperature and motion events
+  version: "1.0.0"
+  title: Event Analyzer API
+  contact:
+    email: kjames39@my.bcit.ca
+paths:
+  /temperature:
+    get:
+      summary: Gets a temperature event from history
+      operationId: app.get_temperature
+      description: Gets temperature event from the event store at specified index
+      parameters:
+        - name: index
+          in: query
+          description: Gets the temperature event at the index in the event store
+          schema:
+            type: integer
+            example: 3
+      responses:
+        '200':
+          description: Successfully returned a temperature event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemperatureEvent'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /motion:
+    get:
+      summary: Gets a motion event from history
+      operationId: app.get_motion
+      description: Gets motion event from the event store at specified index
+      parameters:
+        - name: index
+          in: query
+          description: Gets the motion event at the index in the event store
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Successfully returned a motion event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MotionEvent'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /stats:
+    get:
+      summary: Gets the event statistics
+      operationId: app.get_event_stats
+      description: Gets statistics about events in the queue
+      responses:
+        '200':
+          description: Successfully returned event statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+components:
+  schemas:
+    TemperatureEvent:
+      type: object
+      required:
+        - device_id
+        - temperature
+        - event_type
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          description: The ID of the device sending the event.
+          example: "thermostat-001"
+        temperature:
+          type: number
+          description: The temperature reading in Celsius.
+          example: 22.5
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the reading was taken.
+          example: "2025-01-09T10:30:00Z"
+        event_type:
+          type: string
+          description: The type of event.
+          example: "temperature"
+        trace_id:
+          type: integer
+          description: Unique identifier for tracing the request.
+          example: "1704912245123456789"
+    MotionEvent:
+      type: object
+      required:
+        - device_id
+        - room
+        - motion_intensity
+        - trace_id
+      properties:
+        device_id:
+          type: string
+          description: The ID of the motion detector sending the event.
+          example: "motion-sensor-007"
+        room:
+          type: string
+          description: The room where motion was detected.
+          example: "Living Room"
+        timestamp:
+          type: string
+          format: date-time
+          description: The time the motion was detected.
+          example: "2025-01-09T10:45:00Z"
+        motion_intensity:
+          type: number
+          description: The intensity of the detected motion (0-100 scale).
+          example: 75
+        trace_id:
+          type: integer
+          description: Unique identifier for tracing the request.
+          example: "1704912245123456789"
+    Stats:
+      required:
+        - num_temperature_events
+        - num_motion_events
+      properties:
+        num_temperature_events:
+          type: integer
+          example: 189
+        num_motion_events:
+          type: integer
+          example: 213
