@@ -8,12 +8,14 @@ from models import Base
 
 logger = logging.getLogger('basicLogger')
 
-config_path = os.environ.get('CONFIG_PATH', '../config/storage')
-app_conf_file = os.path.join(config_path, 'storage_app_conf.yaml')
+ENV = os.environ.get('ENV', 'dev')
+CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
+FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'storage')
+app_conf_file = os.path.join(FULL_CONFIG_PATH, 'storage_app_conf.yaml')
 
 with open(app_conf_file, "r") as f:
     app_config = yaml.safe_load(f.read())
-
+    
 db_user = app_config["datastore"]["user"]
 db_password = app_config["datastore"]["password"]
 db_host = app_config["datastore"]["hostname"]
