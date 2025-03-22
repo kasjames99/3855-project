@@ -1,5 +1,6 @@
 import connexion
 import os
+import sys
 import json
 import httpx
 import time
@@ -10,6 +11,12 @@ from datetime import datetime
 from threading import Lock
 from connexion import NoContent
 from pykafka import KafkaClient
+
+print(f"ENV: {os.environ.get('ENV', 'Not set')}")
+print(f"CONFIG_PATH: {os.environ.get('CONFIG_PATH', 'Not set')}")
+print(f"Constructed path: {os.path.join(os.environ.get('CONFIG_PATH', '../config'), os.environ.get('ENV', 'dev'), 'receiver')}")
+print(f"Current working directory: {os.getcwd()}")
+print(f"Files in /app/config: {os.listdir('/app/config') if os.path.exists('/app/config') else 'Directory not found'}")
 
 env = os.environ.get('ENV', 'dev')
 
