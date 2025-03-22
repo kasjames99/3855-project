@@ -1,5 +1,5 @@
 FROM python:3.9-slim
-LABEL maintainer="student@bcit.ca"
+LABEL maintainer="kasjames39@bcit.ca"
 RUN mkdir /app
 COPY ./requirements.txt /app/requirements.txt
 WORKDIR /app
