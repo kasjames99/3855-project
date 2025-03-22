@@ -9,23 +9,22 @@ import os
 import yaml
 import httpx
 
-env = os.environ.get('ENV', 'dev')
+ENV = os.environ.get('ENV', 'dev')
+CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
 
-base_config_path = os.environ.get('CONFIG_PATH', '../config')
+FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'processing')
+LOG_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'processing_log_conf.yml')
+APP_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'processing_app_conf.yml')
 
-config_path = os.path.join(base_config_path, env, 'processing')
-log_conf_file = os.path.join(config_path, 'processing_log_conf.yml')
-app_conf_file = os.path.join(config_path, 'processing_app_conf.yml')
-
-with open(app_conf_file, 'r') as f:
+with open(APP_CONF_FILE, 'r') as f:
     app_conf = yaml.safe_load(f)
 
-with open(log_conf_file, 'r') as f:
+with open(LOG_CONF_FILE, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('processingService')
-logger.info(f"Loading configuration for environment: {env}")
+logger.info(f"Loading configuration for environment: {ENV}")
 
 STATS_FILE_PATH = "stats.json"
 

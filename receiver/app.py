@@ -12,25 +12,18 @@ from threading import Lock
 from connexion import NoContent
 from pykafka import KafkaClient
 
-print(f"ENV: {os.environ.get('ENV', 'Not set')}")
-print(f"CONFIG_PATH: {os.environ.get('CONFIG_PATH', 'Not set')}")
-print(f"Constructed path: {os.path.join(os.environ.get('CONFIG_PATH', '../config'), os.environ.get('ENV', 'dev'), 'receiver')}")
-print(f"Current working directory: {os.getcwd()}")
-print(f"Files in /app/config: {os.listdir('/app/config') if os.path.exists('/app/config') else 'Directory not found'}")
+ENV = os.environ.get('ENV', 'dev')
+CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
 
-env = os.environ.get('ENV', 'dev')
+FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'receiver')
+LOG_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'receiver_log_conf.yml')
+APP_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'receiver_app_conf.yml')
 
-base_config_path = os.environ.get('CONFIG_PATH', '../config')
-
-config_path = os.path.join(base_config_path, env, 'receiver')
-log_conf_file = os.path.join(config_path, 'receiver_log_conf.yml')
-app_conf_file = os.path.join(config_path, 'receiver_app_conf.yml')
-
-with open(log_conf_file, "r") as f:
+with open(LOG_CONF_FILE, "r") as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
-with open(app_conf_file, 'r') as f:
+with open(APP_CONF_FILE, 'r') as f:
     app_config = yaml.safe_load(f.read())
 
 logger = logging.getLogger("basicLogger")

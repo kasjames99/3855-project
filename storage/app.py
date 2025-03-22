@@ -12,19 +12,19 @@ from models import temperatureEvent, motionEvent
 from datetime import datetime
 from connexion import NoContent
 
-env = os.environ.get('ENV', 'dev')
+ENV = os.environ.get('ENV', 'dev')
+CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
 
-base_config_path = os.environ.get('CONFIG_PATH', '../config')
+# Construct the paths once and store them in constants
+FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'storage')
+LOG_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'storage_log_conf.yml')
+APP_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'storage_app_conf.yaml')
 
-config_path = os.path.join(base_config_path, env, 'storage')
-log_conf_file = os.path.join(config_path, 'storage_log_conf.yml')
-app_conf_file = os.path.join(config_path, 'storage_app_conf.yaml')
-
-with open(log_conf_file, 'r') as f:
+with open(LOG_CONF_FILE, 'r') as f:
     log_conf = yaml.safe_load(f.read())
     logging.config.dictConfig(log_conf)
 
-with open(app_conf_file, 'r') as f:
+with open(APP_CONF_FILE, 'r') as f:
     app_conf = yaml.safe_load(f.read())
 
 logger = logging.getLogger('basicLogger')
