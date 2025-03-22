@@ -6,16 +6,38 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from models import Base
 
-logger = logging.getLogger('basicLogger')
+# Debug prints
+print("==== DB_SETUP DEBUG ====", file=sys.stderr)
+print(f"Current working directory: {os.getcwd()}", file=sys.stderr)
+print(f"CONFIG_PATH environment variable: {os.environ.get('CONFIG_PATH', 'Not set')}", file=sys.stderr)
+print(f"ENV environment variable: {os.environ.get('ENV', 'Not set')}", file=sys.stderr)
 
+logger = logging.getLogger('basicLogger')
 ENV = os.environ.get('ENV', 'dev')
 CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
 FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'storage')
 app_conf_file = os.path.join(FULL_CONFIG_PATH, 'storage_app_conf.yaml')
 
+print(f"FULL_CONFIG_PATH: {FULL_CONFIG_PATH}", file=sys.stderr)
+print(f"app_conf_file: {app_conf_file}", file=sys.stderr)
+print(f"Resolved absolute path: {os.path.abspath(app_conf_file)}", file=sys.stderr)
+
+try:
+    print(f"Directory listing of CONFIG_PATH: {os.listdir(CONFIG_PATH)}", file=sys.stderr)
+    if os.path.exists(os.path.join(CONFIG_PATH, ENV)):
+        print(f"Directory listing of {os.path.join(CONFIG_PATH, ENV)}: {os.listdir(os.path.join(CONFIG_PATH, ENV))}", file=sys.stderr)
+        if os.path.exists(FULL_CONFIG_PATH):
+            print(f"Directory listing of FULL_CONFIG_PATH: {os.listdir(FULL_CONFIG_PATH)}", file=sys.stderr)
+        else:
+            print(f"FULL_CONFIG_PATH does not exist: {FULL_CONFIG_PATH}", file=sys.stderr)
+    else:
+        print(f"Environment directory does not exist: {os.path.join(CONFIG_PATH, ENV)}", file=sys.stderr)
+except Exception as e:
+    print(f"Error listing directories: {e}", file=sys.stderr)
+
 with open(app_conf_file, "r") as f:
     app_config = yaml.safe_load(f.read())
-    
+
 db_user = app_config["datastore"]["user"]
 db_password = app_config["datastore"]["password"]
 db_host = app_config["datastore"]["hostname"]
