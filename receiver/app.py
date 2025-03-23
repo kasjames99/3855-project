@@ -33,7 +33,7 @@ def connect_to_kafka():
     kafka_connected = False
     retry_count = 0
     max_retries = 30
-    
+
     while not kafka_connected and retry_count < max_retries:
         try:
             logger.info(f"Connecting to Kafka (Attempt {retry_count+1}/{max_retries})...")
@@ -81,12 +81,12 @@ def log_event(event_type, event_body):
         "datetime": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "payload": event_data
     }
-    
+
     msg_str = json.dumps(msg)
     logger.info(f"Sending message to Kafka: {msg_str}")
     producer.produce(msg_str.encode('utf-8'))
     logger.info(f"Produced Kafka message for event {event_type} with trace ID: {trace_id}")
-    
+
     return NoContent, 201
 
 def postTemperatureEvent(body):

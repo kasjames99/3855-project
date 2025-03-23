@@ -1,17 +1,26 @@
 import connexion
 import json
 import os
+import sys
 import yaml
 import logging
 import logging.config
 from pykafka import KafkaClient
 
+# Use absolute paths
 ENV = os.environ.get('ENV', 'dev')
-CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
-
+CONFIG_PATH = "/app/config"  # Absolute path, not relative
 FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'analyzer')
 LOG_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'analyzer_log_conf.yml')
 APP_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'analyzer_app_conf.yml')
+
+# Debug prints
+print(f"ENV: {ENV}", file=sys.stderr)
+print(f"CONFIG_PATH: {CONFIG_PATH}", file=sys.stderr)
+print(f"FULL_CONFIG_PATH: {FULL_CONFIG_PATH}", file=sys.stderr)
+print(f"APP_CONF_FILE: {APP_CONF_FILE}", file=sys.stderr)
+print(f"LOG_CONF_FILE: {LOG_CONF_FILE}", file=sys.stderr)
+print(f"Files exist: APP={os.path.exists(APP_CONF_FILE)}, LOG={os.path.exists(LOG_CONF_FILE)}", file=sys.stderr)
 
 with open(APP_CONF_FILE, 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -30,7 +39,7 @@ def get_temperature(index):
         return {"message": "Index must be an integer"}, 400
 
     logger.info(f"Retrieving temperature event at index {index}")
-    
+
     try:
         host_str = f"{app_config['kafka']['hostname']}:{app_config['kafka']['port']}"
         logger.info(f"Attempting to connect to Kafka at {host_str}")
@@ -44,13 +53,13 @@ def get_temperature(index):
     except Exception as e:
         logger.error(f"Detailed Kafka connection error: {str(e)}")
         return {"message": f"Error connecting to message queue: {str(e)}"}, 500
-    
+
     current_index = 0
     try:
         for msg in consumer:
             message = msg.value.decode("utf-8")
             data = json.loads(message)
-            
+
             if data["type"] == "temperature":
                 if current_index == index:
                     logger.info(f"Found temperature event at index {index}")
@@ -59,7 +68,7 @@ def get_temperature(index):
     except Exception as e:
         logger.error(f"Error processing Kafka messages: {e}")
         return {"message": "Error processing message queue"}, 500
-    
+
     logger.warning(f"No temperature event found at index {index}")
     return {"message": f"No temperature event found at index {index}"}, 404
 
@@ -71,7 +80,7 @@ def get_motion(index):
         return {"message": "Index must be an integer"}, 400
 
     logger.info(f"Retrieving motion event at index {index}")
-    
+
     try:
         host_str = f"{app_config['kafka']['hostname']}:{app_config['kafka']['port']}"
         logger.info(f"Attempting to connect to Kafka at {host_str}")
@@ -88,13 +97,13 @@ def get_motion(index):
         logger.error(f"Detailed Kafka connection error: Type: {error_type}, Message: {error_msg}")
         logger.exception("Full error traceback:")
         return {"message": f"Error connecting to message queue: {error_type} - {error_msg}"}, 500
-    
+
     current_index = 0
     try:
         for msg in consumer:
             message = msg.value.decode("utf-8")
             data = json.loads(message)
-            
+
             if data["type"] == "motion":
                 if current_index == index:
                     logger.info(f"Found motion event at index {index}")
@@ -103,13 +112,13 @@ def get_motion(index):
     except Exception as e:
         logger.error(f"Error processing Kafka messages: {e}")
         return {"message": "Error processing message queue"}, 500
-    
+
     logger.warning(f"No motion event found at index {index}")
     return {"message": f"No motion event found at index {index}"}, 404
 
 def get_event_stats():
     logger.info("Retrieving event statistics")
-    
+
     try:
         client = KafkaClient(hosts=f"{app_config['kafka']['hostname']}:{app_config['kafka']['port']}")
         topic = client.topics[str.encode(app_config['kafka']['topic'])]
@@ -117,15 +126,15 @@ def get_event_stats():
     except Exception as e:
         logger.error(f"Error connecting to Kafka: {e}")
         return {"message": "Error connecting to message queue"}, 500
-    
+
     temperature_count = 0
     motion_count = 0
-    
+
     try:
         for msg in consumer:
             message = msg.value.decode("utf-8")
             data = json.loads(message)
-            
+
             if data["type"] == "temperature":
                 temperature_count += 1
             elif data["type"] == "motion":
@@ -133,12 +142,12 @@ def get_event_stats():
     except Exception as e:
         logger.error(f"Error processing Kafka messages: {e}")
         return {"message": "Error processing message queue"}, 500
-    
+
     stats = {
         "num_temperature_events": temperature_count,
         "num_motion_events": motion_count
     }
-    
+
     logger.info(f"Event statistics: {stats}")
     return stats, 200
 

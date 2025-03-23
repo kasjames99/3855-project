@@ -10,7 +10,7 @@ import yaml
 import httpx
 
 ENV = os.environ.get('ENV', 'dev')
-CONFIG_PATH = os.environ.get('CONFIG_PATH', '../config')
+CONFIG_PATH = "/app/config"
 
 FULL_CONFIG_PATH = os.path.join(CONFIG_PATH, ENV, 'processing')
 LOG_CONF_FILE = os.path.join(FULL_CONFIG_PATH, 'processing_log_conf.yml')
@@ -46,7 +46,7 @@ default_stats = {
 
 def populate_stats():
     logger.info("Populating stats...")
-    
+
     if os.path.exists(STATS_FILE_PATH):
         try:
             with open(STATS_FILE_PATH, 'r') as file:
@@ -128,7 +128,7 @@ def populate_stats():
         logger.error(f"Error querying motion events: {e}")
 
     stats['last_event_datetime'] = current_datetime
-    
+
     try:
         with open(STATS_FILE_PATH, 'w') as file:
             json.dump(stats, file, indent=4)
