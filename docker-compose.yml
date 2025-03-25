@@ -77,6 +77,14 @@ services:
       - APP_HOST=0.0.0.0
       - CONFIG_PATH=/app/config
       - ENV=${ENV:-dev}
+      - DB_USER=${DB_USER:-user}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-3855-database}
+      - KAFKA_HOST=${KAFKA_HOST:-kafka}
+      - KAFKA_PORT=${KAFKA_PORT:-9092}
+      - KAFKA_TOPIC=${KAFKA_TOPIC:-events}
     depends_on:
       db:
         condition: service_healthy

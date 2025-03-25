@@ -184,4 +184,4 @@ venv/
 ENV/
 *.zip
 *.jpg
-config/dev/storage/storage_app_conf.yaml
+*_prod.env

@@ -1,0 +1,11 @@
+version: 1
+datastore:
+  user: "user"
+  password: "password"
+  hostname: "mysql"
+  port: 3306
+  db: "3855-database"
+events:
+  hostname: "kafka"
+  port: 29092
+  topic: "events"
