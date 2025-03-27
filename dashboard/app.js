@@ -5,9 +5,9 @@ const baseUrl = window.location.hostname === 'localhost' ?
 const PROCESSING_STATS_URL = `${baseUrl}:8085/stats`;
 const ANALYZER_STATS_URL = `${baseUrl}:8100/stats`;
 const currentTime = new Date().toISOString();
-const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-const EVENT_TYPE_1_URL = `${baseUrl}:8090/events/motion?start_timestamp=${encodeURIComponent(oneHourAgo)}&end_timestamp=${encodeURIComponent(currentTime)}`;
-const EVENT_TYPE_2_URL = `${baseUrl}:8090/events/temperature?start_timestamp=${encodeURIComponent(oneHourAgo)}&end_timestamp=${encodeURIComponent(currentTime)}`;
+const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+const EVENT_TYPE_1_URL = `${baseUrl}:8090/events/motion?start_timestamp=${encodeURIComponent(thirtyDaysAgo)}&end_timestamp=${encodeURIComponent(currentTime)}`;
+const EVENT_TYPE_2_URL = `${baseUrl}:8090/events/temperature?start_timestamp=${encodeURIComponent(thirtyDaysAgo)}&end_timestamp=${encodeURIComponent(currentTime)}`;
 
 // DOM Elements
 const processingStatsEl = document.getElementById('processing-stats');
