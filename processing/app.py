@@ -2,6 +2,8 @@ import connexion
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 import logging
 import logging.config
 import json
@@ -151,6 +153,14 @@ def get_stats():
         return {'message': 'Stats file not found'}, 400
 
 app = connexion.FlaskApp(__name__, specification_dir='.')
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_api('stats_api.yml')
 
 if __name__ == '__main__':

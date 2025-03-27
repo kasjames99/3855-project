@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo-container">
+                <img src="logo.png" alt="System Logo" id="logo">
+            </div>
+            <h1>Microservices Dashboard</h1>
+            <div class="last-updated">
+                Last Updated: <span id="last-updated-time">--</span>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Processing Service Stats -->
+            <div class="dashboard-card">
+                <h2>Processing Service Statistics</h2>
+                <div id="processing-stats" class="stats-container">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Analyzer Service Stats -->
+            <div class="dashboard-card">
+                <h2>Analyzer Service Statistics</h2>
+                <div id="analyzer-stats" class="stats-container">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Event Type 1 -->
+            <div class="dashboard-card">
+                <h2>Random Event (Type 1)</h2>
+                <div id="event-type-1" class="event-container">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Event Type 2 -->
+            <div class="dashboard-card">
+                <h2>Random Event (Type 2)</h2>
+                <div id="event-type-2" class="event-container">
+                    Loading...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

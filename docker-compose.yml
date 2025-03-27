@@ -126,6 +126,17 @@ services:
       - ENV=${ENV:-dev}
     depends_on:
       - kafka
+  
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: dashboard
+    ports:
+      - "8080:80"
+    depends_on:
+      - processing
+      - analyzer
 
 volumes:
   mysql-data:
