@@ -54,7 +54,7 @@ services:
       context: ./receiver
       dockerfile: Dockerfile
     deploy:
-      replicas: 3
+      replicas: ${RECEIVER_REPLICAS:-3}
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -63,8 +63,8 @@ services:
       - CONFIG_PATH=/app/config
       - ENV=${ENV:-dev}
       - CORS_ALLOW_ALL=no
-      - KAFKA_HOST=kafka  # Add this
-      - KAFKA_PORT=29092  # Add this
+      - KAFKA_HOST=kafka
+      - KAFKA_PORT=29092
     depends_on:
       - kafka
     networks:
@@ -75,7 +75,6 @@ services:
       context: ./storage
       dockerfile: Dockerfile
     container_name: storage
-    # No exposed ports - accessed via Nginx
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -99,6 +98,12 @@ services:
         condition: service_started
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka:9092 --list"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   processing:
     build:
