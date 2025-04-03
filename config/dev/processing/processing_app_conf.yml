@@ -1,6 +1,6 @@
 urls:
-  temperature_events: "http://storage:8090/events/temperature"
-  motion_events: "http://storage:8090/events/motion"
+  temperature_events: "http://storage:8090/storage/events/temperature"
+  motion_events: "http://storage:8090/storage/events/motion"
 
 file_paths:
   stats_file: "/app/data/stats.json"

@@ -1,5 +1,5 @@
 FROM python:3.9-slim
-LABEL maintainer="student@bcit.ca"
+LABEL maintainer="kjames39@bcit.ca"
 
 # Install required packages for mysqlclient
 RUN apt-get update && apt-get install -y default-libmysqlclient-dev build-essential pkg-config

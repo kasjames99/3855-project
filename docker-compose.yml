@@ -8,8 +8,6 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: 3855-database
-    ports:
-      - 3306:3306
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
@@ -17,20 +15,23 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
-    ports:
-      - "2181:2181"
     volumes:
       - zookeeper-data:/opt/zookeeper-3.4.13/data
+    networks:
+      - app-network
 
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_CREATE_TOPICS: "events:1:1"
       KAFKA_ADVERTISED_HOST_NAME: kafka
@@ -45,14 +46,15 @@ services:
       - ./data/kafka_data:/var/lib/kafka/kafka-logs
     depends_on:
       - zookeeper
+    networks:
+      - app-network
 
   receiver:
     build:
       context: ./receiver
       dockerfile: Dockerfile
-    container_name: receiver
-    ports:
-      - "8081:8081"
+    deploy:
+      replicas: 3
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -60,16 +62,20 @@ services:
       - APP_HOST=0.0.0.0
       - CONFIG_PATH=/app/config
       - ENV=${ENV:-dev}
+      - CORS_ALLOW_ALL=no
+      - KAFKA_HOST=kafka  # Add this
+      - KAFKA_PORT=29092  # Add this
     depends_on:
       - kafka
+    networks:
+      - app-network
 
   storage:
     build:
       context: ./storage
       dockerfile: Dockerfile
     container_name: storage
-    ports:
-      - "8090:8090"
+    # No exposed ports - accessed via Nginx
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -83,21 +89,23 @@ services:
       - DB_PORT=${DB_PORT:-3306}
       - DB_NAME=${DB_NAME:-3855-database}
       - KAFKA_HOST=${KAFKA_HOST:-kafka}
-      - KAFKA_PORT=${KAFKA_PORT:-9092}
+      - KAFKA_PORT=${KAFKA_PORT:-29092}
       - KAFKA_TOPIC=${KAFKA_TOPIC:-events}
+      - CORS_ALLOW_ALL=no
     depends_on:
       db:
         condition: service_healthy
       kafka:
         condition: service_started
+    networks:
+      - app-network
 
   processing:
     build:
       context: ./processing
       dockerfile: Dockerfile
     container_name: processing
-    ports:
-      - "8100:8100"
+    # No exposed ports - accessed via Nginx
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -107,16 +115,18 @@ services:
       - CONFIG_PATH=/app/config
       - DATA_PATH=/app/data
       - ENV=${ENV:-dev}
+      - CORS_ALLOW_ALL=no
     depends_on:
       - storage
+    networks:
+      - app-network
 
   analyzer:
     build:
       context: ./analyzer
       dockerfile: Dockerfile
     container_name: analyzer
-    ports:
-      - "8085:8085"
+    # No exposed ports - accessed via Nginx
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
@@ -124,8 +134,11 @@ services:
       - APP_HOST=0.0.0.0
       - CONFIG_PATH=/app/config
       - ENV=${ENV:-dev}
+      - CORS_ALLOW_ALL=no
     depends_on:
       - kafka
+    networks:
+      - app-network
   
   dashboard:
     build:
@@ -133,11 +146,19 @@ services:
       dockerfile: Dockerfile
     container_name: dashboard
     ports:
-      - "8080:80"
+      - "8000:80"
     depends_on:
       - processing
       - analyzer
+      - receiver
+      - storage
+    networks:
+      - app-network
 
 volumes:
   mysql-data:
   zookeeper-data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -35,6 +35,16 @@ def process_messages():
     """ Process event messages """
     logger.info("Starting Kafka consumer...")
 
+    kafka_host = os.environ.get('KAFKA_HOST', app_conf['events']['hostname'])
+    kafka_port = os.environ.get('KAFKA_PORT', app_conf['events']['port'])
+    kafka_topic = os.environ.get('KAFKA_TOPIC', app_conf['events']['topic'])
+
+    hostname = f"{kafka_host}:{kafka_port}"
+    client = KafkaClient(hosts=hostname)
+    logger.info(f"Connected to Kafka at {hostname}")
+
+    topic = client.topics[str.encode(kafka_topic)]
+
     try:
         #sets up a connection to the kafka broker using hostname and port
         hostname = f"{app_conf['events']['hostname']}:{app_conf['events']['port']}"
@@ -146,15 +156,16 @@ def setup_kafka_thread():
     logger.info("Kafka consumer thread started")
 
 app = connexion.FlaskApp(__name__, specification_dir='.')
-app.add_middleware(
-    CORSMiddleware,
-    position=MiddlewarePosition.BEFORE_EXCEPTION,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-app.add_api("receiver.yml", strict_validation=True, validate_responses=True)
+if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
+    app.add_middleware(
+        CORSMiddleware,
+        position=MiddlewarePosition.BEFORE_EXCEPTION,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+app.add_api("receiver.yml", base_path="/storage", strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
     logger.info("Storage Service starting...")
