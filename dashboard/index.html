@@ -50,6 +50,60 @@
                     Loading...
                 </div>
             </div>
+
+            <!-- Consistency Check Section -->
+            <div class="dashboard-card">
+                <h2>Consistency Checks</h2>
+                <div class="consistency-actions">
+                    <button id="run-consistency-check" class="action-button">Run Consistency Check</button>
+                </div>
+                <div id="consistency-status" class="status-container">
+                    <p>No consistency checks have been run yet.</p>
+                </div>
+                <div id="consistency-results" class="results-container" style="display: none;">
+                    <h3>Last Check Results</h3>
+                    <div class="counts-section">
+                        <h4>Event Counts</h4>
+                        <table id="counts-table">
+                            <tr>
+                                <th>Source</th>
+                                <th>Temperature</th>
+                                <th>Motion</th>
+                            </tr>
+                            <tr>
+                                <td>Database</td>
+                                <td id="db-temp-count">--</td>
+                                <td id="db-motion-count">--</td>
+                            </tr>
+                            <tr>
+                                <td>Queue</td>
+                                <td id="queue-temp-count">--</td>
+                                <td id="queue-motion-count">--</td>
+                            </tr>
+                            <tr>
+                                <td>Processing</td>
+                                <td id="proc-temp-count">--</td>
+                                <td id="proc-motion-count">--</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="missing-section">
+                        <h4>Missing Events</h4>
+                        <div class="missing-tabs">
+                            <button class="tab-button active" data-tab="missing-db">Missing in Database</button>
+                            <button class="tab-button" data-tab="missing-queue">Missing in Queue</button>
+                        </div>
+                        <div id="missing-db" class="tab-content active">
+                            <p id="missing-db-count">0 events missing</p>
+                            <div id="missing-db-list"></div>
+                        </div>
+                        <div id="missing-queue" class="tab-content">
+                            <p id="missing-queue-count">0 events missing</p>
+                            <div id="missing-queue-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

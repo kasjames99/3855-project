@@ -1,0 +1,128 @@
+openapi: 3.0.0
+info:
+  description: This API provides consistency check services
+  version: "1.0.0"
+  title: Consistency Check API
+  contact:
+    email: kjames39@my.bcit.ca
+paths:
+  /checks:
+    get:
+      summary: Gets the latest consistency check results
+      operationId: app.get_checks
+      description: Returns the latest consistency check results from the JSON data store
+      responses:
+        '200':
+          description: Successfully returned consistency check results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckResults'
+        '404':
+          description: No consistency checks have been run yet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /update:
+    post:
+      summary: Runs a new consistency check
+      operationId: app.run_update
+      description: Performs a new consistency check and updates the JSON data store
+      responses:
+        '200':
+          description: Successfully ran consistency check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  processing_time_ms:
+                    type: integer
+                    description: Time taken to run the consistency check in milliseconds
+                    example: 250
+        '400':
+          description: Error running consistency check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    CheckResults:
+      type: object
+      required:
+        - last_updated
+        - counts
+        - missing_in_db
+        - missing_in_queue
+      properties:
+        last_updated:
+          type: string
+          format: date-time
+          description: Timestamp when the check was last run
+          example: "2025-03-15T14:30:00Z"
+        counts:
+          type: object
+          properties:
+            db:
+              type: object
+              properties:
+                temperature:
+                  type: integer
+                  example: 10
+                motion:
+                  type: integer
+                  example: 5
+            queue:
+              type: object
+              properties:
+                temperature:
+                  type: integer
+                  example: 7
+                motion:
+                  type: integer
+                  example: 3
+            processing:
+              type: object
+              properties:
+                temperature:
+                  type: integer
+                  example: 2
+                motion:
+                  type: integer
+                  example: 8
+        missing_in_db:
+          type: array
+          items:
+            type: object
+            properties:
+              event_id:
+                type: string
+                example: "thermostat-001"
+              trace_id:
+                type: integer
+                example: 123456789
+              type:
+                type: string
+                example: "temperature"
+        missing_in_queue:
+          type: array
+          items:
+            type: object
+            properties:
+              event_id:
+                type: string
+                example: "motion-sensor-007"
+              trace_id:
+                type: integer
+                example: 987654321
+              type:
+                type: string
+                example: "motion"

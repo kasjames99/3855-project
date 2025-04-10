@@ -1,0 +1,16 @@
+version: 1
+
+service:
+  port: 8200
+  debug: true
+
+datastore:
+  filepath: "/app/data/consistency_checks.json"
+
+endpoints:
+  processing: "http://processing:8100/processing"
+  analyzer: "http://analyzer:8085/analyzer"
+  storage: "http://storage:8090/storage"
+
+logging:
+  config_file: "consistency_check_log_conf.yml"

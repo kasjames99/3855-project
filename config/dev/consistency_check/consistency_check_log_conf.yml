@@ -1,0 +1,29 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  simple:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  detailed:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(module)s - %(lineno)d'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: simple
+    level: DEBUG
+    stream: ext://sys.stdout
+  file:
+    class: logging.FileHandler
+    formatter: detailed
+    level: DEBUG
+    filename: /app/logs/consistency_check.log
+loggers:
+  consistencyCheckService:
+    level: DEBUG
+    handlers:
+      - console
+      - file
+    propagate: no
+root:
+  level: DEBUG
+  handlers:
+    - console

@@ -147,6 +147,109 @@ def get_motion_events(start_timestamp, end_timestamp):
     logger.info(f"Found {len(results)} motion events")
     return results, 200
 
+# Add these functions to your storage app.py file
+
+def get_event_counts():
+    """
+    Gets the count of each event type in the database.
+    
+    Returns:
+        A dictionary with counts for each event type and a 200 status code,
+        or an error message and a 400 status code.
+    """
+    session = DB_SESSION()
+    
+    try:
+        temperature_count = session.query(temperatureEvent).count()
+        motion_count = session.query(motionEvent).count()
+        
+        result = {
+            "temperature": temperature_count,
+            "motion": motion_count
+        }
+        
+        logger.info(f"Retrieved event counts: {result}")
+        return result, 200
+    
+    except Exception as e:
+        logger.error(f"Error retrieving event counts: {str(e)}")
+        return {"message": f"Error retrieving event counts: {str(e)}"}, 400
+    
+    finally:
+        session.close()
+
+def get_temperature_ids():
+    """
+    Gets a list of event IDs and trace IDs for temperature events.
+    
+    Returns:
+        A list of dictionaries containing event_id and trace_id, and a 200 status code,
+        or an error message and a 400 status code.
+    """
+    session = DB_SESSION()
+    
+    try:
+        # Select only the fields we need
+        events = session.query(
+            temperatureEvent.device_id,
+            temperatureEvent.trace_id
+        ).all()
+        
+        # Convert to list of dictionaries
+        result = [
+            {
+                "event_id": event.device_id,
+                "trace_id": event.trace_id
+            }
+            for event in events
+        ]
+        
+        logger.info(f"Retrieved {len(result)} temperature event IDs")
+        return result, 200
+    
+    except Exception as e:
+        logger.error(f"Error retrieving temperature event IDs: {str(e)}")
+        return {"message": f"Error retrieving temperature event IDs: {str(e)}"}, 400
+    
+    finally:
+        session.close()
+
+def get_motion_ids():
+    """
+    Gets a list of event IDs and trace IDs for motion events.
+    
+    Returns:
+        A list of dictionaries containing event_id and trace_id, and a 200 status code,
+        or an error message and a 400 status code.
+    """
+    session = DB_SESSION()
+    
+    try:
+        # Select only the fields we need
+        events = session.query(
+            motionEvent.device_id,
+            motionEvent.trace_id
+        ).all()
+        
+        # Convert to list of dictionaries
+        result = [
+            {
+                "event_id": event.device_id,
+                "trace_id": event.trace_id
+            }
+            for event in events
+        ]
+        
+        logger.info(f"Retrieved {len(result)} motion event IDs")
+        return result, 200
+    
+    except Exception as e:
+        logger.error(f"Error retrieving motion event IDs: {str(e)}")
+        return {"message": f"Error retrieving motion event IDs: {str(e)}"}, 400
+    
+    finally:
+        session.close()
+
 #This will listen for messages constantly in the background
 def setup_kafka_thread():
     logger.info("Creating Kafka consumer thread")

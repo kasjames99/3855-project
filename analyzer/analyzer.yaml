@@ -92,6 +92,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Stats'
+  /temperature/ids:
+    get:
+      summary: Gets a list of event IDs and trace IDs for temperature events
+      operationId: app.get_temperature_ids
+      description: Returns a list of event IDs and trace IDs for all temperature events in the queue
+      responses:
+        '200':
+          description: Successfully returned temperature event IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      example: "thermostat-001"
+                    trace_id:
+                      type: integer
+                      example: 1704912245123456789
+        '500':
+          description: Error retrieving temperature event IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  
+  /motion/ids:
+    get:
+      summary: Gets a list of event IDs and trace IDs for motion events
+      operationId: app.get_motion_ids
+      description: Returns a list of event IDs and trace IDs for all motion events in the queue
+      responses:
+        '200':
+          description: Successfully returned motion event IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      example: "motion-sensor-007"
+                    trace_id:
+                      type: integer
+                      example: 1704912245123456789
+        '500':
+          description: Error retrieving motion event IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 components:
   schemas:
     TemperatureEvent:

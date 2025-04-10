@@ -70,6 +70,96 @@ paths:
                   $ref: '#/components/schemas/MotionEvent'
         "400":
           description: Invalid input.
+  /counts:
+    get:
+      summary: Gets the count of each event type in the database
+      operationId: app.get_event_counts
+      description: Returns the number of records for each event type in the database
+      responses:
+        '200':
+          description: Successfully returned event counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  temperature:
+                    type: integer
+                    example: 100
+                  motion:
+                    type: integer
+                    example: 50
+        '400':
+          description: Error retrieving event counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  
+  /temperature/ids:
+    get:
+      summary: Gets a list of event IDs and trace IDs for temperature events
+      operationId: app.get_temperature_ids
+      description: Returns a list of event IDs and trace IDs for all temperature events in the database
+      responses:
+        '200':
+          description: Successfully returned temperature event IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      example: "thermostat-001"
+                    trace_id:
+                      type: integer
+                      example: 1704912245123456789
+        '400':
+          description: Error retrieving temperature event IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  
+  /motion/ids:
+    get:
+      summary: Gets a list of event IDs and trace IDs for motion events
+      operationId: app.get_motion_ids
+      description: Returns a list of event IDs and trace IDs for all motion events in the database
+      responses:
+        '200':
+          description: Successfully returned motion event IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: string
+                      example: "motion-sensor-007"
+                    trace_id:
+                      type: integer
+                      example: 1704912245123456789
+        '400':
+          description: Error retrieving motion event IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 components:
   schemas:
     TemperatureEvent:

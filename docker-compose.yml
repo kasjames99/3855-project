@@ -159,6 +159,27 @@ services:
       - storage
     networks:
       - app-network
+      
+  consistency_check:
+    build:
+      context: ./consistency_check
+      dockerfile: Dockerfile
+    container_name: consistency_check
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./data/consistency_check:/app/data
+    environment:
+      - APP_HOST=0.0.0.0
+      - CONFIG_PATH=/app/config
+      - ENV=${ENV:-dev}
+      - CORS_ALLOW_ALL=no
+    depends_on:
+      - processing
+      - analyzer
+      - storage
+    networks:
+      - app-network
 
 volumes:
   mysql-data:

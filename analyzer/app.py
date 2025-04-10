@@ -153,6 +153,94 @@ def get_event_stats():
     logger.info(f"Event statistics: {stats}")
     return stats, 200
 
+def get_temperature_ids():
+    """
+    Gets a list of event IDs and trace IDs for temperature events from the Kafka queue.
+    
+    Returns:
+        A list of dictionaries containing event_id and trace_id, and a 200 status code,
+        or an error message and a 400 status code.
+    """
+    logger.info("Retrieving temperature event IDs from Kafka queue")
+    
+    try:
+        host_str = f"{app_config['kafka']['hostname']}:{app_config['kafka']['port']}"
+        logger.info(f"Attempting to connect to Kafka at {host_str}")
+        client = KafkaClient(hosts=host_str)
+        topic_name = app_config['kafka']['topic']
+        logger.info(f"Looking for topic: {topic_name}")
+        topic = client.topics[str.encode(topic_name)]
+        logger.info("Successfully connected to Kafka and found topic")
+        consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
+        logger.info("Created Kafka consumer")
+    except Exception as e:
+        logger.error(f"Detailed Kafka connection error: {str(e)}")
+        return {"message": f"Error connecting to message queue: {str(e)}"}, 500
+    
+    temperature_events = []
+    
+    try:
+        for msg in consumer:
+            message = msg.value.decode("utf-8")
+            data = json.loads(message)
+            
+            if data["type"] == "temperature":
+                payload = data["payload"]
+                temperature_events.append({
+                    "event_id": payload["device_id"],
+                    "trace_id": payload["trace_id"]
+                })
+    except Exception as e:
+        logger.error(f"Error processing Kafka messages: {e}")
+        return {"message": "Error processing message queue"}, 500
+    
+    logger.info(f"Found {len(temperature_events)} temperature events in Kafka queue")
+    return temperature_events, 200
+
+def get_motion_ids():
+    """
+    Gets a list of event IDs and trace IDs for motion events from the Kafka queue.
+    
+    Returns:
+        A list of dictionaries containing event_id and trace_id, and a 200 status code,
+        or an error message and a 400 status code.
+    """
+    logger.info("Retrieving motion event IDs from Kafka queue")
+    
+    try:
+        host_str = f"{app_config['kafka']['hostname']}:{app_config['kafka']['port']}"
+        logger.info(f"Attempting to connect to Kafka at {host_str}")
+        client = KafkaClient(hosts=host_str)
+        topic_name = app_config['kafka']['topic']
+        logger.info(f"Looking for topic: {topic_name}")
+        topic = client.topics[str.encode(topic_name)]
+        logger.info("Successfully connected to Kafka and found topic")
+        consumer = topic.get_simple_consumer(reset_offset_on_start=True, consumer_timeout_ms=1000)
+        logger.info("Created Kafka consumer")
+    except Exception as e:
+        logger.error(f"Detailed Kafka connection error: {str(e)}")
+        return {"message": f"Error connecting to message queue: {str(e)}"}, 500
+    
+    motion_events = []
+    
+    try:
+        for msg in consumer:
+            message = msg.value.decode("utf-8")
+            data = json.loads(message)
+            
+            if data["type"] == "motion":
+                payload = data["payload"]
+                motion_events.append({
+                    "event_id": payload["device_id"],
+                    "trace_id": payload["trace_id"]
+                })
+    except Exception as e:
+        logger.error(f"Error processing Kafka messages: {e}")
+        return {"message": "Error processing message queue"}, 500
+    
+    logger.info(f"Found {len(motion_events)} motion events in Kafka queue")
+    return motion_events, 200
+
 app = connexion.FlaskApp(__name__, specification_dir='.')
 if "CORS_ALLOW_ALL" in os.environ and os.environ["CORS_ALLOW_ALL"] == "yes":
     app.add_middleware(
